@@ -1,1 +1,217 @@
-
+{
+  "name": "whatsapp_intake_v1",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/whatsapp/incoming",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0a26cee5-bf1c-4ef4-a270-efe59a374ea0",
+      "name": "Webhook",
+      "webhookId": "a1437119-f8ed-42a4-b545-58c0debcd4df"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1685b2ba-24b2-4f62-a125-fc0a562fa193",
+              "name": "message_text",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "6eb19364-69e0-43a2-bd38-e30eca46c91c",
+              "name": "sender_phone",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "aa33f963-69a1-4e17-baa8-49ec62c4f8b1",
+              "name": "timestamp",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "eb830592-bf25-4a1e-9ff7-6d2dec932f85",
+              "name": "provider_message_id",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "e1d3dad5-83ff-4a2e-b429-783b2cc6d4db",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $json.message_text || \"\";\n\nreturn {\n  ...$json,\n  message_text: text.trim().toLowerCase()\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "b33e0d33-9268-4dcf-8f05-089511b572a7",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "14f1fYATyx7NPLpFkxGjmvZpLx_Wt3bfNrfAkdZ9jqGQ",
+          "mode": "list",
+          "cachedResultName": "airbnb_ai_agent_logs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14f1fYATyx7NPLpFkxGjmvZpLx_Wt3bfNrfAkdZ9jqGQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "conversation_log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14f1fYATyx7NPLpFkxGjmvZpLx_Wt3bfNrfAkdZ9jqGQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "conversation_id": "{{$json.provider_message_id}}",
+            "sender_phone": "{{$json.sender_phone}}",
+            "message_text": "{{$json.message_text}}",
+            "timestamp": "{{$json.timestamp}}",
+            "status": "received"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "conversation_id",
+              "displayName": "conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sender_phone",
+              "displayName": "sender_phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message_text",
+              "displayName": "message_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        0
+      ],
+      "id": "ff574e71-d242-4c97-a819-df7bee0e74a9",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "APIQCUw34hVyatO3",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "fea3dc2e-be54-4acf-9ea9-ee3bd78aca1b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d3bd8fdcbec265afb139c830f4d26119773c9963b2513cb597f5ee96678a70c4"
+  },
+  "id": "IMCbg4keswsNilmYzzeH5",
+  "tags": []
+}
