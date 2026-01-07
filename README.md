@@ -1,29 +1,54 @@
 # Airbnb AI Agent (n8n)
 
-This project demonstrates an AI-powered Airbnb assistant built using **n8n**.
+This project showcases a modular AI-powered Airbnb assistant built using n8n.
+The agent automates guest conversations over WhatsApp using AI-driven intent
+detection and response generation.
 
-## Project Goal
-To automate guest communication and intake over WhatsApp and later expand into booking support, FAQs, and escalation.
+---
 
-## Current Status
-✅ Workflow 1 completed: WhatsApp Intake
+## Architecture Overview
 
-## Workflow Overview
+The system is designed as multiple independent workflows:
 
-### Workflow 1: WhatsApp Intake
-- Receives incoming WhatsApp messages via webhook
-- Captures guest message and metadata
-- Prepares structured input for downstream AI processing
-- Sends immediate acknowledgment to the guest
+1. WhatsApp Intake
+2. Intent Detection
+3. Reply Generator
+4. Intent-specific handlers
 
-## Tools Used
-- n8n (no-code / low-code workflow automation)
-- WhatsApp via webhook integration
+Each workflow has a single responsibility, making the system easier to extend
+and maintain.
 
-## Upcoming Workflows (Planned)
-- AI response generation
-- FAQ handling
-- Booking data lookup
-- Human handoff
+---
 
-> Note: Secrets, credentials, and tokens are intentionally excluded.
+## Implemented Workflows
+
+### Workflow 1 – WhatsApp Intake
+- Receives guest messages via WhatsApp
+- Structures incoming data
+- Sends initial acknowledgment
+
+### Workflow 2 – Intent Detection
+- Uses AI to understand guest intent
+- Routes requests to appropriate workflows
+
+### Workflow 3 – Reply Generator
+- Generates dynamic responses using AI
+- Centralizes message formatting
+
+### Workflow 4 – Intent-specific Workflows
+- Availability inquiries
+- Greetings
+- Fallback handling
+
+---
+
+## Tech Stack
+- n8n (workflow orchestration)
+- WhatsApp integration
+- AI / LLM for intent and responses
+
+---
+
+## Notes
+- Secrets and credentials are excluded
+- Focus is on workflow design and AI orchestration
