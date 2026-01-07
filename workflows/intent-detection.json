@@ -1,1 +1,574 @@
-
+{
+  "name": "intent_detection_v1",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "705f45e2-a0fe-4490-82fa-616071550f31",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a137d5d7-8aac-40b8-9394-a80e702433ef",
+              "name": "conversation_id",
+              "value": "={{$json.conversation_id}}",
+              "type": "string"
+            },
+            {
+              "id": "8d6c1601-3b3f-4e22-a506-e4a91e6cfb7e",
+              "name": "sender_phone",
+              "value": "={{$json.sender_phone}}",
+              "type": "string"
+            },
+            {
+              "id": "55a9b777-9bc5-4758-b005-c1aa2b513c04",
+              "name": "message_text",
+              "value": "={{$json.message_text}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "0115e90e-fffd-4624-93a5-dc156d837003",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are an intent classification engine for an Airbnb automation system.\n\nClassify the user's message into exactly ONE of the following intents:\n\n- availability_check\n- pricing_query\n- booking_request\n- modification_request\n- cancellation_request\n- greeting\n- general_question\n- unclear\n\nRules:\n- Respond with ONLY the intent name\n- Do NOT add explanations\n- Do NOT add punctuation\n- Do NOT add extra words\n- If intent is ambiguous, respond with \"unclear\"\n"
+            },
+            {
+              "content": "={{$json.message_text}}\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "de40ac06-6f24-4206-a8cf-d55b0ef62835",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "0A3a0nYBXpTOY7lo",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json}}",
+                    "rightValue": "availability_check",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "6871107c-938b-4e18-a6a9-a6a9a48a5941"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "bc2972d5-7a83-43f4-b771-8953eca74f0e",
+                    "leftValue": "={{$json}}",
+                    "rightValue": "pricing_query",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "31f75304-4eca-4394-9aab-7295ebadf9b5",
+                    "leftValue": "={{$json}}",
+                    "rightValue": "booking_request",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e183c562-5a13-48f4-afdf-c11b24de9710",
+                    "leftValue": "={{$json}}",
+                    "rightValue": "greeting",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "494bcfc8-895b-4f6c-bea4-f777d4df60c6",
+                    "leftValue": "={{$json}} ",
+                    "rightValue": "unclear",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        768,
+        0
+      ],
+      "id": "cb3ffda9-8d29-409d-b60a-a4d1011a7fb5",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "54b2TJWaqKJac92BGq1aA",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/54b2TJWaqKJac92BGq1aA",
+          "cachedResultName": "availability_check_v1"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1008,
+        -208
+      ],
+      "id": "5fa36ecc-294c-44f8-b8ad-48fa99419193",
+      "name": "Call 'availability_check_v1'"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "ZGo7nz3SBGY-CePCtPrhc",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/ZGo7nz3SBGY-CePCtPrhc",
+          "cachedResultName": "Reply_generator"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1184,
+        -208
+      ],
+      "id": "8c696e4b-ea54-4a38-9a22-78682b679fd7",
+      "name": "Call 'Reply_generator'"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "ZGo7nz3SBGY-CePCtPrhc",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/ZGo7nz3SBGY-CePCtPrhc",
+          "cachedResultName": "Reply_generator"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1104,
+        336
+      ],
+      "id": "d0f3b534-2c3d-49c1-bd79-3df3fa890dee",
+      "name": "Call 'Reply_generator'1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "SSfpVoak4hY1nhrvlJxTD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/SSfpVoak4hY1nhrvlJxTD",
+          "cachedResultName": "pricing_check_v1"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1072,
+        -16
+      ],
+      "id": "a1d02c69-14f0-42d0-ad68-a9ee1b04cbfe",
+      "name": "Call 'pricing_check_v1'"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "ZGo7nz3SBGY-CePCtPrhc",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/ZGo7nz3SBGY-CePCtPrhc",
+          "cachedResultName": "Reply_generator"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1280,
+        -16
+      ],
+      "id": "a473f847-43c2-4c19-b504-39c3a05d803e",
+      "name": "Call 'Reply_generator'2"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "O6uM2BVE4d7_g8UkO5nsC",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/O6uM2BVE4d7_g8UkO5nsC",
+          "cachedResultName": "booking_request_v1"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1120,
+        144
+      ],
+      "id": "4b3e77eb-22e9-46a5-97cb-d6fdeff146f6",
+      "name": "Call 'booking_request_v1'"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "ZGo7nz3SBGY-CePCtPrhc",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/ZGo7nz3SBGY-CePCtPrhc",
+          "cachedResultName": "Reply_generator"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1328,
+        144
+      ],
+      "id": "d7868e05-f47d-4e91-9657-9aac0a22da35",
+      "name": "Call 'Reply_generator'3"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "ZGo7nz3SBGY-CePCtPrhc",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/ZGo7nz3SBGY-CePCtPrhc",
+          "cachedResultName": "Reply_generator"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1120,
+        560
+      ],
+      "id": "2d39c1f5-b237-4598-a092-82eb0eedac63",
+      "name": "Call 'Reply_generator'4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Call 'availability_check_v1'",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'pricing_check_v1'",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'booking_request_v1'",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'Reply_generator'1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'Reply_generator'4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'availability_check_v1'": {
+      "main": [
+        [
+          {
+            "node": "Call 'Reply_generator'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'pricing_check_v1'": {
+      "main": [
+        [
+          {
+            "node": "Call 'Reply_generator'2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'booking_request_v1'": {
+      "main": [
+        [
+          {
+            "node": "Call 'Reply_generator'3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "15582f9a-53a7-4dab-9e45-f6184b0cbc3d",
+  "meta": {
+    "instanceId": "d3bd8fdcbec265afb139c830f4d26119773c9963b2513cb597f5ee96678a70c4"
+  },
+  "id": "BIgBzNDKZrl-sLE1JiRq8",
+  "tags": []
+}
