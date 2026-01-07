@@ -1,1 +1,122 @@
-
+{
+  "name": "pricing_check_v1",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c340cbe1-f4fb-4567-a97c-07373afe2751",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You extract pricing-related information from a user message.\n\nIf dates or number of nights are present, return:\npricing_possible\n\nIf required information is missing, return:\npricing_missing_info\n"
+            },
+            {
+              "content": "={{$json.user_message || $json.message_text}}\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "c2be887b-60fe-4552-9a03-2c40c7517e5d",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "0A3a0nYBXpTOY7lo",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "295fc0a1-2ae6-436f-8e5e-b443fb34e317",
+              "name": "pricing_status",
+              "value": "={{$json}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        0
+      ],
+      "id": "240933e2-cbcb-462a-8d94-748acea61a03",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "a2ce4955-e016-4a8a-ba3a-bb97035d1fa6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d3bd8fdcbec265afb139c830f4d26119773c9963b2513cb597f5ee96678a70c4"
+  },
+  "id": "SSfpVoak4hY1nhrvlJxTD",
+  "tags": []
+}
