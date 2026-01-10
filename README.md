@@ -54,6 +54,9 @@ maintainability.
 - Validates booking requirements
 - Prepares next steps or confirmations
 
+## High-Level Flow
+WhatsApp → Intake → Intent Detection → Intent Workflow → Reply Generator → WhatsApp
+
 ---
 
 ## Technology Stack
